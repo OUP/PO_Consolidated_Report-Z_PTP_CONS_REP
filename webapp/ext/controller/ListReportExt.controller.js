@@ -17,6 +17,8 @@ sap.ui.define(
   ) {
     "use strict";
 
+    let _aFilters = [];
+
     return {
       onInit: function () {
         try {
@@ -48,7 +50,7 @@ sap.ui.define(
         const fileName = "PO_Consolidated_Report";
         const models = new JSONModel(dataSource);
         const oDateFormat = sap.ui.core.format.DateFormat.getDateTimeInstance({
-          pattern: "dd-MM-yyyy",
+          pattern: "dd.MM.yyyy",
         });
 
         var oExport = new Export({
@@ -63,7 +65,6 @@ sap.ui.define(
               name: "Business Division",
               template: {
                 content: "{BusinessDivision}",
-                width: 25,
               },
             },
             {
@@ -71,7 +72,6 @@ sap.ui.define(
 
               template: {
                 content: "{Material}",
-                width: 40,
               },
             },
             {
@@ -107,7 +107,16 @@ sap.ui.define(
             {
               name: "Delivery Date",
               template: {
-                content: "{PoDelDate}",
+                content: {
+                  parts: ["PoDeliveryDate"],
+                  formatter: function (sDate) {
+                    let sValue = "";
+                    if (sDate) {
+                      sValue = oDateFormat.format(sDate);
+                    }
+                    return sValue;
+                  },
+                },
               },
             },
             {
@@ -180,6 +189,7 @@ sap.ui.define(
                 $top: 999999999,
                 $skip: 0,
               },
+              filters: _aFilters,
               success: (oDataResponse) => {
                 reslove(oDataResponse.results || []);
               },
@@ -230,6 +240,9 @@ sap.ui.define(
             }
           }
         }
+
+        // save filter for export csv
+        _aFilters = oBindingParams.filters;
       },
     };
   }

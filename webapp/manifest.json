@@ -167,15 +167,6 @@
               "type": "GridTable"
             }
           }
-        },
-        "pages": {
-          "ObjectPage|ZPTP_C_PO_CONS_REPT": {
-            "entitySet": "ZPTP_C_PO_CONS_REPT",
-            "defaultLayoutTypeIfExternalNavigation": "MidColumnFullScreen",
-            "component": {
-              "name": "sap.suite.ui.generic.template.ObjectPage"
-            }
-          }
         }
       }
     }
