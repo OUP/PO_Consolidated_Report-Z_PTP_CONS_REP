@@ -233,10 +233,21 @@ sap.ui.define(
           const oCustomControl = oSmartFilterBar.getControlByKey(sCustomFilter);
           if (oCustomControl instanceof MultiComboBox) {
             const sKeys = oCustomControl.getSelectedKeys();
+            const aFilter = [];
+            let oFilter;
             for (const sKey of sKeys) {
-              oBindingParams.filters.push(
-                new Filter(sCustomFilter, "EQ", sKey)
-              );
+              aFilter.push(new Filter(sCustomFilter, "EQ", sKey));
+            }
+
+            // check for entries
+            if (aFilter.length > 0) {
+              oFilter = new Filter({
+                filters: aFilter,
+                and: false,
+              });
+
+              // add filter to binding parameters
+              oBindingParams.filters.push(oFilter);
             }
           }
         }
