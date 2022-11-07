@@ -18,21 +18,17 @@ sap.ui.define(
     "use strict";
 
     let _aFilters = [];
+    let _sIdPrefix;
 
     return {
       onInit: function () {
+        _sIdPrefix =
+          "oup.ptp.po.consolidated.report::sap.suite.ui.generic.template.ListReport.view.ListReport::ZPTP_C_PO_CONS_REPT--";
         try {
           const oSmartTable = this.getView().byId(
             this.getView().getId() + "--listReport"
           );
           oSmartTable.setUseExportToExcel(true);
-
-          oSmartTable.attachBeforeExport((oEvent) => {
-            debugger;
-            var oConfig = oEvent.getParameter("exportSettings");
-            // Obtain the actual count
-            oConfig.dataSource.count = 100; // Enter the count here - 100 is just a sample value
-          });
 
           this.getView()
             .byId(this.getView().getId() + "--exportButton")
@@ -64,12 +60,11 @@ sap.ui.define(
             {
               name: "Business Division",
               template: {
-                content: "{BusinessDivision}",
+                content: "{BusinessDivisionText}",
               },
             },
             {
               name: "Material Number",
-
               template: {
                 content: "{Material}",
               },
@@ -178,6 +173,33 @@ sap.ui.define(
             // stop busy indicator
             this.getView().setBusy(false);
           });
+      },
+
+      onAfterRendering: function () {
+        const oTable = this.byId(_sIdPrefix + "GridTable");
+        oTable.attachBusyStateChanged(this._onBusyStateChanged);
+      },
+
+      _onBusyStateChanged: function (oEvent) {
+        const bBusy = oEvent.getParameter("busy");
+
+        if (!bBusy) {
+          const oTable = oEvent.getSource();
+          let oTpc = null;
+
+          // grid table
+          if (sap.ui.table.TablePointerExtension) {
+            oTpc = new sap.ui.table.TablePointerExtension(oTable);
+          } else {
+            oTpc = new sap.ui.table.extensions.Pointer(oTable);
+          }
+
+          // columns
+          const aColumns = oTable.getColumns();
+          for (let i = aColumns.length; i >= 0; i--) {
+            oTpc.doAutoResizeColumn(i);
+          }
+        }
       },
 
       _readData: function () {
