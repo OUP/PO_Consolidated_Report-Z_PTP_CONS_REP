@@ -1,42 +1,4 @@
-sap.ui.define(
-  [
-    "sap/ui/core/util/Export",
-    "sap/ui/core/util/ExportTypeCSV",
-    "sap/ui/model/json/JSONModel",
-    "sap/ui/model/Filter",
-    "sap/ui/comp/smartfilterbar/SmartFilterBar",
-    "sap/m/MultiComboBox",
-  ],
-  function (
-    Export,
-    ExportTypeCSV,
-    JSONModel,
-    Filter,
-    SmartFilterBar,
-    MultiComboBox
-  ) {
-    "use strict";
-
-    let _aFilters = [];
-    let _sIdPrefix;
-
-    return {
-      onInit: function () {
-        _sIdPrefix =
-          "oup.ptp.po.consolidated.report::sap.suite.ui.generic.template.ListReport.view.ListReport::ZPTP_C_PO_CONS_REPT--";
-        try {
-          const oSmartTable = this.getView().byId(
-            this.getView().getId() + "--listReport"
-          );
-          oSmartTable.setUseExportToExcel(true);
-
-          this.getView()
-            .byId(this.getView().getId() + "--exportButton")
-            .setVisible(True);
-        } catch (error) {
-          // un caught exception
-        }
-      },
+ext.controller.ListReportExt
 
       ExportToCSV: async function () {
         // start busy indicator
@@ -178,6 +140,12 @@ sap.ui.define(
       onAfterRendering: function () {
         const oTable = this.byId(_sIdPrefix + "GridTable");
         oTable.attachBusyStateChanged(this._onBusyStateChanged);
+        
+        const oListReport = this.byId(_sIdPrefix + "listReport");
+        oListReport.attachBeforeExport({}, (e) => {
+          let exportSettings = e.getParameter("exportSettings");
+          // debugger
+        });
       },
 
       _onBusyStateChanged: function (oEvent) {
